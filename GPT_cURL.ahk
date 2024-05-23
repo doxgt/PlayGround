@@ -103,7 +103,7 @@ F5::
 }
 
 
-SC029::									; Scan code for Tilde (~)
+;;SC029::									; Scan code for Tilde (~), listed for demonstration purpose
 +RButton::
 ^RButton::
 {
@@ -111,7 +111,7 @@ SC029::									; Scan code for Tilde (~)
         FileDelete "" SAPI_AudioOverwrittenFile "" 
     A_Clipboard := ""
     RunWaitOne(Phiola_Remote_Record)
-    Keywait "SC029"
+;;    Keywait "SC029"
     KeyWait "RButton"
     Sleep 300
     RunWaitOne(Phiola_Remote_Stop)
