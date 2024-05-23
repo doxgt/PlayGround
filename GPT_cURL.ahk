@@ -16,6 +16,8 @@ For F3 and F5 demonstrations, you should have already recorded an audio file (Wh
 The hotkeys that do PTT are what I am using in production (the Tilde, or SC029, was already appropriated for other purposes; but included here for illustration).  Leave cursor in a text field.  Transcribed output should be pasted automatically at the cursor.
 
 Switching back to AHK v1 syntax is fairly simple if necessary ... mainly just need to note that double-quote escaping in v1 is different.
+
+If working behind a proxy server, will need to update cURL command flags accordingly.
 */
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -32,13 +34,13 @@ SAPI_AudioOverwrittenFile := "C:\Users\username\Desktop\WhisperAudio.m4a"
 
 Path_toPhiola := "C:\Users\username\Documents\phiola-2.0.24-windows-x64\phiola-2\phiola.exe"
 
-ChatGPT_Prompt := "Write out a random title, or 2, from Oscar Wilde's collection: `"The Happy Prince and Other Tales`"."			; This tests double-quote escaping, which is a headache
+API_Prompt := "Write out a random title, or 2, from Oscar Wilde's collection: `"The Happy Prince and Other Tales`"."			; This tests double-quote escaping, which is a headache
 
-ChatGPT_Prompt := RegExReplace(ChatGPT_Prompt, "\R", "\n")				
-ChatGPT_Prompt := Trim(ChatGPT_Prompt)
-ChatGPT_Prompt := StrReplace(ChatGPT_Prompt, "`"", "\\\`"")
+API_Prompt := RegExReplace(API_Prompt, "\R", "\n")				
+API_Prompt := Trim(API_Prompt)
+API_Prompt := StrReplace(API_Prompt, "`"", "\\\`"")
 
-; MsgBox(ChatGPT_Prompt)
+; MsgBox(API_Prompt)
 
 API_Endpoint := API_URL . A_Space
 
@@ -50,7 +52,7 @@ API_ContentType_Header :=  "-H `"Content-Type: application/json" . "`"" . A_Spac
 
 SAPI_ContentType_Header :=  "-H `"Content-Type: multipart/form-data" . "`"" . A_Space
 
-API_Data := "-d " . "`"{\`"model\`": \`"" . API_Model . "\`", \`"messages\`": [{\`"role\`": \`"assistant\`", \`"content\`": \`"" . ChatGPT_Prompt . "\`"}]}`"" . A_Space
+API_Data := "-d " . "`"{\`"model\`": \`"" . API_Model . "\`", \`"messages\`": [{\`"role\`": \`"assistant\`", \`"content\`": \`"" . API_Prompt . "\`"}]}`"" . A_Space
 
 ; API_Data := "-d " . "`"@" . API_PromptFile . "`"" . A_Space		; if uploading a json string file - less problems with escaping
 
