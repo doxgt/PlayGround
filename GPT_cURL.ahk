@@ -25,7 +25,6 @@ Global Transcription_Model := "whisper-1"
 Global Transcription_Prompt := "new paragraph, comma, period"
 Global Transcription_AudioTestFile := "C:\Users\username\Desktop\WhisperAudioTest.m4a"
 Global Transcription_AudioOverwrittenFile := "C:\Users\username\Desktop\WhisperAudio.m4a"
-;TestFile := "C:\Users\username\Desktop\TesTemp.txt"
 
 Global Chat_Prompt := "Write out a random title, or 2, from Oscar Wilde's collection: `"The Happy Prince and Other Tales`"."			; double-quote escaping can be a headache
 Chat_Prompt := RegExReplace(Chat_Prompt, "\R", "\n")				
