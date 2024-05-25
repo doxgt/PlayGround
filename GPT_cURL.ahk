@@ -98,7 +98,8 @@ F5::
 }
 
 
-Join(sep, params*) {
+Join(sep, params*) 
+{
     For index, param in params
         str .= param . sep
     Return str
@@ -130,5 +131,5 @@ TranscriptionCurling()
 
 PostProcessing()
 {
-;;    Through https://www.autohotkey.com/docs/v2/lib/RegExReplace.htm
+;;    E.g., https://www.autohotkey.com/docs/v2/lib/RegExReplace.htm
 }
