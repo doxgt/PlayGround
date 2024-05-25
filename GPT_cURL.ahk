@@ -9,7 +9,7 @@ Download phiola (lightweight, portable audio recorder with convenient CLI contro
 F2 - F5 are merely to demonstrate proofs of concept.  Once CMD window disappears, press Ctrl-V in any text field to observe results.
 For transcription demonstration, audio file (e.g., WhisperAudioTest.m4a) should be pre-recorded, unless using PTT.
 The hotkeys that perform PTT are what I use in production (the "Tilde ~", or SC029, is included as an example).  If cursor is in a text field, transcribed output should be pasted automatically at the cursor.
-Switching back to AHK v1 is fairly straightforward ... mainly just need to note that double-quote escaping in v1 is different.
+Switching syntax to AHK v1, if necessary, is fairly straightforward ... mainly just need to note that double-quote escaping in v1 is different.
 If working behind a proxy server, will need to update cURL command flags accordingly.
 */
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
