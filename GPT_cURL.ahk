@@ -107,9 +107,9 @@ ChatCurling()
 {
     Key_Header :=  "-H `"Authorization: Bearer " . API_Key . "`""
     Chat_ContentType_Header :=  "-H `"Content-Type: application/json" . "`""
-    API_Data := "-d " . "`"{\`"model\`": \`"" . Chat_Model . "\`", \`"messages\`": [{\`"role\`": \`"assistant\`", \`"content\`": \`"" . Chat_Prompt . "\`"}]}`""
-;    API_Data := "-d " . "`"@" . Chat_PromptFile . "`""
-    Return Join(A_Space, Curl_Command, Chat_Endpoint, Key_Header, Chat_ContentType_Header, API_Data, Pipe_toClip)
+    Chat_Data := "-d " . "`"{\`"model\`": \`"" . Chat_Model . "\`", \`"messages\`": [{\`"role\`": \`"assistant\`", \`"content\`": \`"" . Chat_Prompt . "\`"}]}`""
+;    Chat_Data := "-d " . "`"@" . Chat_PromptFile . "`""
+    Return Join(A_Space, Curl_Command, Chat_Endpoint, Key_Header, Chat_ContentType_Header, Chat_Data, Pipe_toClip)
 }
 
 
