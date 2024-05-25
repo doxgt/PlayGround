@@ -32,7 +32,7 @@ SAPI_Prompt := "comma, period, new paragraph"
 SAPI_AudioTestFile := "C:\Users\username\Desktop\WhisperAudioTest.m4a"
 SAPI_AudioOverwrittenFile := "C:\Users\username\Desktop\WhisperAudio.m4a"
 
-Path_toPhiola := "C:\Users\username\Documents\phiola-2.0.24-windows-x64\phiola-2\phiola.exe"
+Path_toPhiola := "C:\Users\username\Desktop\phiola-2\phiola.exe"
 
 API_Prompt := "Write out a random title, or 2, from Oscar Wilde's collection: `"The Happy Prince and Other Tales`"."			; This tests double-quote escaping, which is a headache
 
@@ -74,7 +74,7 @@ SAPI_CurlingTest := "curl " . SAPI_Endpoint . Key_Header . SAPI_ContentType_Head
 
 SAPI_Curling := "curl " . SAPI_Endpoint . Key_Header . SAPI_ContentType_Header . SAPI_Model_Form . SAPI_ResponseFormat_Form . SAPI_AudioFile_Form . SAPI_Prompt_Form . PipetoClip
 
-Phiola_Remote_Record := Path_toPhiola . " -Background -Debug record -o " . SAPI_AudioOverwrittenFile . " -remote"
+Phiola_Remote_Record := Path_toPhiola . " -Background record -f -o " . SAPI_AudioOverwrittenFile . " -remote"
 
 Phiola_Remote_Stop := Path_toPhiola . " remote stop"
 
@@ -107,12 +107,13 @@ F5::
 +RButton::
 ^RButton::
 {
-    If FileExist("" SAPI_AudioOverwrittenFile  "")
-        FileDelete "" SAPI_AudioOverwrittenFile "" 
+;;    If FileExist("" SAPI_AudioOverwrittenFile  "")
+;;        FileDelete "" SAPI_AudioOverwrittenFile "" 
     A_Clipboard := ""
     RunWaitOne(Phiola_Remote_Record)
 ;;    Keywait "SC029"
     KeyWait "RButton"
+    Send "{Blind}{Ctrl up}{Shift up}{Alt up}"
     Sleep 300
     RunWaitOne(Phiola_Remote_Stop)
     Sleep 300
@@ -120,15 +121,11 @@ F5::
     if !ClipWait(20)
     {
         MsgBox "Transcription did not happen for some reason despite waiting for 20s."
-        If FileExist("" SAPI_AudioOverwrittenFile  "")
-            FileDelete "" SAPI_AudioOverwrittenFile "" 
         Return
     }
-    If FileExist("" SAPI_AudioOverwrittenFile  "")
-        FileDelete "" SAPI_AudioOverwrittenFile "" 
-    Send "{Control up}{Alt up}{Shift up}"
     Sleep 50
-    SendEvent "{Ctrl down}v{Ctrl up}"
+;;    Add RegEx post-processing as desired
+    SendEvent "{Ctrl down}v{Ctrl up}"              ; May have to click to regain focus and manually paste
 }
 
 
