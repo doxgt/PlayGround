@@ -3,139 +3,131 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 /*
-Replace "yourChoiceofAPIkey" with actual API key.
-
+Replace "yourChoiceofAPIkey" with working API key.
 Replace path-to-file with actual path and file name.
-
 Download phiola (lightweight, portable audio recorder with convenient CLI controls) at https://github.com/stsaz/phiola.
-
 F2 - F5 are merely to demonstrate proofs of concept.  Once CMD window disappears, press Ctrl-V in any text field to observe results.
-
-For F3 and F5 demonstrations, you should have already recorded an audio file (WhisperAudioTest.m4a) for transcription upload.
-
-The hotkeys that do PTT are what I am using in production (the Tilde, or SC029, was already appropriated for other purposes; but included here for illustration).  Leave cursor in a text field.  Transcribed output should be pasted automatically at the cursor.
-
-Switching back to AHK v1 syntax is fairly simple if necessary ... mainly just need to note that double-quote escaping in v1 is different.
-
+For transcription demonstration, audio file (e.g., WhisperAudioTest.m4a) should be pre-recorded, unless using PTT.
+The hotkeys that perform PTT are what I use in production (the "Tilde ~", or SC029, is included as an example).  If cursor is in a text field, transcribed output should be pasted automatically at the cursor.
+Switching back to AHK v1 is fairly straightforward ... mainly just need to note that double-quote escaping in v1 is different.
 If working behind a proxy server, will need to update cURL command flags accordingly.
 */
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-API_Key := "yourChoiceofAPIkey"
-API_URL := "https://api.openai.com/v1/chat/completions"
-SAPI_URL := "https://api.openai.com/v1/audio/transcriptions"
-API_Model := "gpt-3.5-turbo"
-API_PromptFile := "C:\Users\username\Desktop\Promtjson.txt"			; Optional and better able to deal with escaping in json strings (https://developer.zendesk.com/documentation/api-basics/getting-started/installing-and-using-curl/#move-json-data-to-a-file)
-SAPI_Model := "whisper-1"
-SAPI_Prompt := "comma, period, new paragraph"
-SAPI_AudioTestFile := "C:\Users\username\Desktop\WhisperAudioTest.m4a"
-SAPI_AudioOverwrittenFile := "C:\Users\username\Desktop\WhisperAudio.m4a"
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; OpenAI Related
+Global API_Key := "yourChoiceofAPIkey"
+Global Chat_Endpoint := "https://api.openai.com/v1/chat/completions"
+Global Transcription_Endpoint := "https://api.openai.com/v1/audio/transcriptions"
+Global Chat_Model := "gpt-3.5-turbo"
+Global Chat_PromptFile := "C:\Users\username\Desktop\Promtjson.txt"			; Optional and better able to deal with escaping in json strings (https://developer.zendesk.com/documentation/api-basics/getting-started/installing-and-using-curl/#move-json-data-to-a-file)
+Global Transcription_Model := "whisper-1"
+Global Transcription_Prompt := "new paragraph, comma, period"
+Global Transcription_AudioTestFile := "C:\Users\username\Desktop\WhisperAudioTest.m4a"
+Global Transcription_AudioOverwrittenFile := "C:\Users\username\Desktop\WhisperAudio.m4a"
+;TestFile := "C:\Users\username\Desktop\TesTemp.txt"
 
+Global Chat_Prompt := "Write out a random title, or 2, from Oscar Wilde's collection: `"The Happy Prince and Other Tales`"."			; double-quote escaping can be a headache
+Chat_Prompt := RegExReplace(Chat_Prompt, "\R", "\n")				
+Chat_Prompt := Trim(Chat_Prompt)
+Chat_Prompt := StrReplace(Chat_Prompt, "`"", "\\\`"")                        ; for escaping purposes inside cURL
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; cURL Related
+Global Curl_Command := "curl"
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Misc Windows Shell Related
+Global Pipe_toClip := "| clip"
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Phiola Related
 Path_toPhiola := "C:\Users\username\Desktop\phiola-2\phiola.exe"
-
-API_Prompt := "Write out a random title, or 2, from Oscar Wilde's collection: `"The Happy Prince and Other Tales`"."			; This tests double-quote escaping, which is a headache
-
-API_Prompt := RegExReplace(API_Prompt, "\R", "\n")				
-API_Prompt := Trim(API_Prompt)
-API_Prompt := StrReplace(API_Prompt, "`"", "\\\`"")
-
-; MsgBox(API_Prompt)
-
-API_Endpoint := API_URL . A_Space
-
-SAPI_Endpoint := SAPI_URL . A_Space
-
-Key_Header :=  "-H `"Authorization: Bearer " . API_Key . "`"" . A_Space
-
-API_ContentType_Header :=  "-H `"Content-Type: application/json" . "`"" . A_Space
-
-SAPI_ContentType_Header :=  "-H `"Content-Type: multipart/form-data" . "`"" . A_Space
-
-API_Data := "-d " . "`"{\`"model\`": \`"" . API_Model . "\`", \`"messages\`": [{\`"role\`": \`"assistant\`", \`"content\`": \`"" . API_Prompt . "\`"}]}`"" . A_Space
-
-; API_Data := "-d " . "`"@" . API_PromptFile . "`"" . A_Space		; if uploading a json string file - less problems with escaping
-
-SAPI_Model_Form :=  "-F model=" . "`"" . SAPI_Model . "`"" . A_Space	
-
-SAPI_ResponseFormat_Form := "-F response_format=" . "`"text`"" . A_Space	
-
-SAPI_AudioTestFile_Form := "-F file=" . "`"@" . SAPI_AudioTestFile . "`"" . A_Space
-
-SAPI_AudioFile_Form := "-F file=" . "`"@" . SAPI_AudioOverwrittenFile . "`"" . A_Space
-
-SAPI_Prompt_Form := "-F prompt=" . "`"" . SAPI_Prompt . "`"" . A_Space
-
-PipetoClip := "| clip"
-
-API_Curling := "curl " . API_Endpoint . Key_Header . API_ContentType_Header . API_Data . PipetoClip
-
-SAPI_CurlingTest := "curl " . SAPI_Endpoint . Key_Header . SAPI_ContentType_Header . SAPI_Model_Form . SAPI_ResponseFormat_Form . SAPI_AudioTestFile_Form . SAPI_Prompt_Form . PipetoClip
-
-SAPI_Curling := "curl " . SAPI_Endpoint . Key_Header . SAPI_ContentType_Header . SAPI_Model_Form . SAPI_ResponseFormat_Form . SAPI_AudioFile_Form . SAPI_Prompt_Form . PipetoClip
-
-Phiola_Remote_Record := Path_toPhiola . " -Background record -f -o " . SAPI_AudioOverwrittenFile . " -remote"
-
+Phiola_Remote_Record := Path_toPhiola . " -Background record -f -o " . Transcription_AudioOverwrittenFile . " -remote"
 Phiola_Remote_Stop := Path_toPhiola . " remote stop"
 
 
 F2::
 {
-Run A_ComSpec ' /c curl https://api.openai.com/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer yourChoiceofAPIkey" -d "{\"model\": \"gpt-3.5-turbo\", \"messages\": [{\"role\": \"assistant\", \"content\": \"Write out a random aphorism by Ludwig Wittgenstein\"}]}" | clip'
+Run A_ComSpec ' /C curl https://api.openai.com/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer yourChoiceofAPIkey" -d "{\"model\": \"gpt-3.5-turbo\", \"messages\": [{\"role\": \"assistant\", \"content\": \"Write out a random aphorism by Ludwig Wittgenstein\"}]}" | clip'
 }
 
 
 F3::
 {
-Run A_ComSpec ' /c curl https://api.openai.com/v1/audio/transcriptions -H "Authorization: Bearer yourChoiceofAPIkey" -H "Content-Type: multipart/form-data" -F model="whisper-1" -F response_format="text" -F file="@C:/Users/username/Desktop/WhisperAudioTest.m4a" -F prompt="comma, period, new paragraph" | clip'
+Run A_ComSpec ' /C curl https://api.openai.com/v1/audio/transcriptions -H "Authorization: Bearer yourChoiceofAPIkey" -H "Content-Type: multipart/form-data" -F model="whisper-1" -F response_format="text" -F file="@C:/Users/username/Desktop/WhisperAudioTest.m4a" -F prompt="comma, period, new paragraph" | clip'
 }
 
 
 F4::
 {
-    RunWaitOne(API_Curling)
+    Run A_ComSpec " /C " ChatCurling()
 }
 
 
 F5::
 {
-    RunWaitOne(SAPI_CurlingTest)
+    Run A_ComSpec " /C " TranscriptionCurling()
 }
 
 
-;;SC029::									; Scan code for Tilde (~), listed for demonstration purpose
+;; SC029::							; Scan code for Tilde (~)
 +RButton::
 ^RButton::
 {
-;;    If FileExist("" SAPI_AudioOverwrittenFile  "")
-;;        FileDelete "" SAPI_AudioOverwrittenFile "" 
+    WinID_Current := WinExist("A")
     A_Clipboard := ""
-    RunWaitOne(Phiola_Remote_Record)
+    Run A_ComSpec " /C " Phiola_Remote_Record
 ;;    Keywait "SC029"
     KeyWait "RButton"
-    Send "{Blind}{Ctrl up}{Shift up}{Alt up}"
+    Send "{Blind}{Control up}{Alt up}{Shift up}"
     Sleep 300
-    RunWaitOne(Phiola_Remote_Stop)
+    Run A_ComSpec " /C " Phiola_Remote_Stop
     Sleep 300
-    RunWaitOne(SAPI_Curling)
+    Run A_ComSpec " /C " TranscriptionCurling()
     if !ClipWait(20)
     {
         MsgBox "Transcription did not happen for some reason despite waiting for 20s."
         Return
     }
-    Sleep 50
-;;    Add RegEx post-processing as desired
-    SendEvent "{Ctrl down}v{Ctrl up}"              ; May have to click to regain focus and manually paste
+    Sleep 50						
+;;    PostProcessing()                        ; Optional but desirable
+    WinActivate "ahk_id " WinID_Current
+    SendEvent "{Ctrl down}v{Ctrl up}"
 }
 
 
-;;;;https://www.autohotkey.com/docs/v2/lib/Run.htm#ExStdOut
-RunWaitOne(command) 
+Join(sep, params*) {
+    For index, param in params
+        str .= param . sep
+    Return str
+}
+
+
+ChatCurling()
 {
-    shell := ComObject("WScript.Shell")
-    ; Execute a single command via cmd.exe
-    exec := shell.Exec(A_ComSpec " /C " command)
-    ; Read and return the command's output
-;    return exec.StdOut.ReadAll()					; Prevents "Phiola_Remote_Stop from working
-    return
+    Key_Header :=  "-H `"Authorization: Bearer " . API_Key . "`""
+    Chat_ContentType_Header :=  "-H `"Content-Type: application/json" . "`""
+    API_Data := "-d " . "`"{\`"model\`": \`"" . Chat_Model . "\`", \`"messages\`": [{\`"role\`": \`"assistant\`", \`"content\`": \`"" . Chat_Prompt . "\`"}]}`""
+;    API_Data := "-d " . "`"@" . Chat_PromptFile . "`""
+    Return Join(A_Space, Curl_Command, Chat_Endpoint, Key_Header, Chat_ContentType_Header, API_Data, Pipe_toClip)
+}
+
+
+TranscriptionCurling()
+{
+    Key_Header :=  "-H `"Authorization: Bearer " . API_Key . "`""
+    Transcription_ContentType_Header :=  "-H `"Content-Type: multipart/form-data" . "`""
+    Transcription_Model_Form :=  "-F model=" . "`"" . Transcription_Model . "`""	
+    Transcription_ResponseFormat_Form := "-F response_format=" . "`"text`"" . A_Space	
+;    Transcription_AudioTestFile_Form := "-F file=" . "`"@" . Transcription_AudioTestFile . "`""
+    Transcription_AudioFile_Form := "-F file=" . "`"@" . Transcription_AudioOverwrittenFile . "`""
+    Transcription_Prompt_Form := "-F prompt=" . "`"" . Transcription_Prompt . "`""
+    Return Join(A_Space, Curl_Command, Transcription_Endpoint, Key_Header, Transcription_ContentType_Header, Transcription_Model_Form, Transcription_ResponseFormat_Form, Transcription_AudioFile_Form, Transcription_Prompt_Form, Pipe_toClip)
+}
+
+
+PostProcessing()
+{
+;;    Through https://www.autohotkey.com/docs/v2/lib/RegExReplace.htm
 }
