@@ -22,6 +22,8 @@ Global Transcription_Endpoint := "https://api.openai.com/v1/audio/transcriptions
 Global Chat_Model := "gpt-3.5-turbo"
 Global Chat_PromptFile := "C:\Users\username\Desktop\Promtjson.txt"			; Optional and better able to deal with escaping in json strings (https://developer.zendesk.com/documentation/api-basics/getting-started/installing-and-using-curl/#move-json-data-to-a-file)
 Global Transcription_Model := "whisper-1"
+Global Transcription_Language := "en"
+Global Transcription_ResponseFormat := "text"
 Global Transcription_Prompt := "new paragraph, comma, period"
 Global Transcription_AudioTestFile := "C:\Users\username\Desktop\WhisperAudioTest.m4a"
 Global Transcription_AudioOverwrittenFile := "C:\Users\username\Desktop\WhisperAudio.m4a"
@@ -118,11 +120,11 @@ TranscriptionCurling()
     Key_Header :=  "-H `"Authorization: Bearer " . API_Key . "`""
     Transcription_ContentType_Header :=  "-H `"Content-Type: multipart/form-data" . "`""
     Transcription_Model_Form :=  "-F model=" . "`"" . Transcription_Model . "`""	
-    Transcription_ResponseFormat_Form := "-F response_format=" . "`"text`"" . A_Space	
-;    Transcription_AudioTestFile_Form := "-F file=" . "`"@" . Transcription_AudioTestFile . "`""
+    Transcription_Language_Form := "-F language=" . "`"" . Transcription_Language . "`""	
+    Transcription_ResponseFormat_Form := "-F response_format=" . "`"" . Transcription_ResponseFormat . "`""
     Transcription_AudioFile_Form := "-F file=" . "`"@" . Transcription_AudioOverwrittenFile . "`""
     Transcription_Prompt_Form := "-F prompt=" . "`"" . Transcription_Prompt . "`""
-    Return Join(A_Space, Curl_Command, Transcription_Endpoint, Key_Header, Transcription_ContentType_Header, Transcription_Model_Form, Transcription_ResponseFormat_Form, Transcription_AudioFile_Form, Transcription_Prompt_Form, Pipe_toClip)
+    Return Join(A_Space, Curl_Command, Transcription_Endpoint, Key_Header, Transcription_ContentType_Header, Transcription_Model_Form, Transcription_Language_Form, Transcription_ResponseFormat_Form, Transcription_AudioFile_Form, Transcription_Prompt_Form, Pipe_toClip)
 }
 
 
