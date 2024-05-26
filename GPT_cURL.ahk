@@ -6,10 +6,10 @@
 Replace "yourChoiceofAPIkey" with working API key.
 Replace path-to-file with actual path and file name.
 Download phiola (lightweight, portable audio recorder with convenient CLI controls) at https://github.com/stsaz/phiola.
-F2 - F5 are merely to demonstrate proofs of concept.  Once CMD window disappears, press Ctrl-V in any text field to observe results.
+F2 - F4 are mainly for testign purposes.  Once CMD window disappears, press Ctrl-V in any text field to observe results.
 For transcription demonstration, audio file (e.g., WhisperAudioTest.m4a) should be pre-recorded, unless using PTT.
-The hotkeys that perform PTT are what I use in production (the "Tilde ~", or SC029, is included as an example).  If cursor is in a text field, transcribed output should be pasted automatically at the cursor.
-Switching syntax to AHK v1, if necessary, is fairly straightforward ... mainly just need to note that double-quote escaping in v1 is different.
+The hotkeys that perform PTT are Ctrl + Right-Click or Shift + Right-Click.  If cursor has focus in a text field, transcribed output would be auto-pasted at the cursor.
+Switching syntax to AHK v1, if necessary, is straightforward ... mainly just need to note that double-quote escaping in v1 is different.
 If working behind a proxy server, will need to update cURL command flags accordingly.
 */
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -48,27 +48,29 @@ Phiola_Remote_Record := Path_toPhiola . " -Background record -f -o " . Transcrip
 Phiola_Remote_Stop := Path_toPhiola . " remote stop"
 
 
-F2::
+F2::                                                ; Test to ensure cURL works ... alter cURL flags as required.
 {
-Run A_ComSpec ' /C curl https://api.openai.com/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer yourChoiceofAPIkey" -d "{\"model\": \"gpt-3.5-turbo\", \"messages\": [{\"role\": \"assistant\", \"content\": \"Write out a random aphorism by Ludwig Wittgenstein\"}]}" | clip'
+    Run A_ComSpec ' /C curl https://api.openai.com/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer yourChoiceofAPIkey" -d "{\"model\": \"gpt-3.5-turbo\", \"messages\": [{\"role\": \"assistant\", \"content\": \"Write out a random aphorism by Ludwig Wittgenstein\"}]}" | clip'
 }
 
 
-F3::
+F3::                                                ; For testing
 {
-Run A_ComSpec ' /C curl https://api.openai.com/v1/audio/transcriptions -H "Authorization: Bearer yourChoiceofAPIkey" -H "Content-Type: multipart/form-data" -F model="whisper-1" -F response_format="text" -F file="@C:/Users/username/Desktop/WhisperAudioTest.m4a" -F prompt="comma, period, new paragraph" | clip'
+    Run A_ComSpec ' /C curl https://api.openai.com/v1/audio/transcriptions -H "Authorization: Bearer yourChoiceofAPIkey" -H "Content-Type: multipart/form-data" -F model="whisper-1" -F response_format="text" -F file="@C:/Users/username/Desktop/WhisperAudioTest.m4a" -F prompt="comma, period, new paragraph" | clip'
 }
 
 
-F4::
+F4::                                                ; For testing
 {
     Run A_ComSpec " /C " ChatCurling()
 }
 
 
-F5::
+F5::                                                ; Useful for re-sending recording if results from first-pass were compromised by "hallucination", etc.
 {
     Run A_ComSpec " /C " TranscriptionCurling()
+;;    PostProcessing()                              ; Optional but desirable
+;;    Wait until CMD window disappears, then press Ctrl-v to see output right at the cursor
 }
 
 
