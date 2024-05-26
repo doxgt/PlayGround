@@ -6,7 +6,7 @@
 Replace "yourChoiceofAPIkey" with working API key.
 Replace path-to-file with actual path and file name.
 Download phiola (lightweight, portable audio recorder with convenient CLI controls) at https://github.com/stsaz/phiola.
-F2 - F4 are mainly for testign purposes.  Once CMD window disappears, press Ctrl-V in any text field to observe results.
+F2 - F4 are mainly for testing purposes.  Once CMD window disappears, press Ctrl-V in any text field to observe results.
 For transcription demonstration, audio file (e.g., WhisperAudioTest.m4a) should be pre-recorded, unless using PTT.
 The hotkeys that perform PTT are Ctrl + Right-Click or Shift + Right-Click.  If cursor has focus in a text field, transcribed output would be auto-pasted at the cursor.
 Switching syntax to AHK v1, if necessary, is straightforward ... mainly just need to note that double-quote escaping in v1 is different.
@@ -20,7 +20,7 @@ Global API_Key := "yourChoiceofAPIkey"
 Global Chat_Endpoint := "https://api.openai.com/v1/chat/completions"
 Global Transcription_Endpoint := "https://api.openai.com/v1/audio/transcriptions"
 Global Chat_Model := "gpt-3.5-turbo"
-Global Chat_PromptFile := "C:\Users\username\Desktop\Promtjson.txt"			; Optional and better able to deal with escaping in json strings (https://developer.zendesk.com/documentation/api-basics/getting-started/installing-and-using-curl/#move-json-data-to-a-file)
+Global Chat_PromptFile := "C:\Users\username\Desktop\Promtjson.txt"			 ; Optional and better able to deal with escaping in json strings (https://developer.zendesk.com/documentation/api-basics/getting-started/installing-and-using-curl/#move-json-data-to-a-file)
 Global Transcription_Model := "whisper-1"
 Global Transcription_Language := "en"
 Global Transcription_ResponseFormat := "text"
@@ -48,7 +48,7 @@ Phiola_Remote_Record := Path_toPhiola . " -Background record -f -o " . Transcrip
 Phiola_Remote_Stop := Path_toPhiola . " remote stop"
 
 
-F2::                                                ; Test to ensure cURL works ... alter cURL flags as required.
+F2::                                                ; Test to ensure cURL works ... add cURL flags as required.
 {
     Run A_ComSpec ' /C curl https://api.openai.com/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer yourChoiceofAPIkey" -d "{\"model\": \"gpt-3.5-turbo\", \"messages\": [{\"role\": \"assistant\", \"content\": \"Write out a random aphorism by Ludwig Wittgenstein\"}]}" | clip'
 }
@@ -66,15 +66,15 @@ F4::                                                ; For testing
 }
 
 
-F5::                                                ; Useful for re-sending recording if results from first-pass were compromised by "hallucination", etc.
+F5::                                                ; Useful for re-sending recording if results from first-pass are compromised by "hallucination", etc.
 {
     Run A_ComSpec " /C " TranscriptionCurling()
 ;;    PostProcessing()                              ; Optional but desirable
-;;    Wait until CMD window disappears, then press Ctrl-v to see output right at the cursor
+;;    Wait until CMD window disappears, then press Ctrl-v to see output right at the cursor (if focused in a text field)
 }
 
 
-;; SC029::							; Scan code for Tilde (~)
+;; SC029::							; Scan code for Tilde (~), shown just for example
 +RButton::
 ^RButton::
 {
@@ -94,7 +94,7 @@ F5::                                                ; Useful for re-sending reco
         Return
     }
     Sleep 50						
-;;    PostProcessing()                        ; Optional but desirable
+;;    PostProcessing()                              ; Optional but desirable
     WinActivate "ahk_id " WinID_Current
     SendEvent "{Ctrl down}v{Ctrl up}"
 }
