@@ -74,7 +74,7 @@ F5::                                                ; Useful for re-sending reco
 }
 
 
-;; SC029::							; Scan code for Tilde (~), shown just for example
+;; SC029::							; Scan code for Tilde (~), shown just as an example
 +RButton::
 ^RButton::
 {
