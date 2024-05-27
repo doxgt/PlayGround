@@ -69,7 +69,7 @@ F4::                                                ; For testing
 F5::                                                ; Useful for re-sending recording if results from first-pass are compromised by "hallucination", etc.
 {
     Run A_ComSpec " /C " TranscriptionCurling()
-;;    PostProcessing()                              ; Optional but desirable
+;;    Clipwait for content, then PostProcessing() as desired.
 ;;    Wait until CMD window disappears, then press Ctrl-v to see output right at the cursor (if focused in a text field)
 }
 
