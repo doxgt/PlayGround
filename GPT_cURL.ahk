@@ -133,5 +133,5 @@ TranscriptionCurling()
 
 PostProcessing()
 {
-;;    E.g., https://www.autohotkey.com/docs/v2/lib/RegExReplace.htm
+;;    Reference https://www.autohotkey.com/docs/v2/lib/RegExReplace.htm
 }
