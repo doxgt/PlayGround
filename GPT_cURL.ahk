@@ -97,7 +97,7 @@ F5::                                                ; Useful for re-sending reco
         MsgBox "Transcription did not happen for some reason despite waiting for 20s."
         Return
     }
-    TrayTip                                         ; May or may not work in closing "toast notification"
+    TrayTip                                         ; Hit and miss in closing "toast notification"
     Sleep 50						
 ;;    PostProcessing()                              ; Optional but desirable
     WinActivate "ahk_id " WinID_Current
