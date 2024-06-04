@@ -10,7 +10,6 @@ F2 - F4 are mainly for testing purposes.  Once CMD window disappears, press Ctrl
 For transcription demonstration, audio file (e.g., WhisperAudioTest.m4a) should be pre-recorded, unless using PTT.
 The hotkeys that perform PTT are Ctrl + Right-Click or Shift + Right-Click.  If cursor has focus in a text field, transcribed output would be auto-pasted at the cursor.
 Switching syntax to AHK v1, if necessary, is straightforward ... mainly just need to note that double-quote escaping in v1 is different.
-For TrayTip (as a toast notification) to be visible on Windows 10 (or later presumably), go into "Notifications & actions settings".  Turn on "Notifications".  If "Focus assist" is on, then go into "Focus assist settings".  Select "Priority only" and "Customize your priority list"; Add an app - AutoHotkey (v2).  Closing of toast notifications is hit and miss on Windows 10.
 If working behind a proxy server, will need to update cURL command flags accordingly.
 */
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -48,6 +47,8 @@ Path_toPhiola := "C:\Users\username\Desktop\phiola-2\phiola.exe"
 Phiola_Remote_Record := Path_toPhiola . " -Background record -f -o " . Transcription_AudioOverwrittenFile . " -remote"
 Phiola_Remote_Stop := Path_toPhiola . " remote stop"
 
+;;ListeningTrayIconFile := "Path-to-TrayIconFile"           ; Useful as Mic On indicator
+
 
 F2::                                                ; Test to ensure cURL works ... add cURL flags as required.
 {
@@ -82,22 +83,20 @@ F5::                                                ; Useful for re-sending reco
     WinID_Current := WinExist("A")
     A_Clipboard := ""
     Run A_ComSpec " /C " Phiola_Remote_Record,, "Hide"
-    TrayTip "Phiola Recording in M4A"
+;;    TraySetIcon(ListeningTrayIconFile)
 ;;    Keywait "SC029"
     KeyWait "RButton"
     Send "{Blind}{Control up}{Alt up}{Shift up}"
     Sleep 300
     Run A_ComSpec " /C " Phiola_Remote_Stop,, "Hide"
-    TrayTip
     Sleep 300
     Run A_ComSpec " /C " TranscriptionCurling(),, "Hide"
-    TrayTip "Attempting Transcription"
     if !ClipWait(20)
     {
         MsgBox "Transcription did not happen for some reason despite waiting for 20s."
         Return
     }
-    TrayTip                                         ; Hit and miss in closing "toast notification"
+;;    TraySetIcon("*")                                         ; Restore default AHK icon
     Sleep 50						
 ;;    PostProcessing()                              ; Optional but desirable
     WinActivate "ahk_id " WinID_Current
