@@ -24,7 +24,7 @@ Global Chat_PromptFile := "C:\Users\username\Desktop\Promtjson.txt"			 ; Optiona
 Global Transcription_Model := "whisper-1"
 Global Transcription_Language := "en"
 Global Transcription_ResponseFormat := "text"
-Global Transcription_Prompt := "new paragraph, comma, period"
+Global Transcription_Prompt := "no cap, cap, no space, open paren, close paren, left paren, right paren, ellipsis, colon mark, number one, spacebar, new paragraph, comma, literal period, period"
 Global Transcription_AudioTestFile := "C:\Users\username\Desktop\WhisperAudioTest.m4a"
 Global Transcription_AudioOverwrittenFile := "C:\Users\username\Desktop\WhisperAudio.m4a"
 
@@ -98,7 +98,7 @@ F5::                                                ; Useful for re-sending reco
     }
 ;;    TraySetIcon("*")                                         ; Restore default AHK icon
     Sleep 50						
-;;    PostProcessing()                              ; Optional but desirable
+    PostProcessing()                              ; Optional but desirable
     WinActivate "ahk_id " WinID_Current
     SendEvent "{Ctrl down}v{Ctrl up}"
 }
@@ -117,7 +117,7 @@ ChatCurling()
     Key_Header :=  "-H `"Authorization: Bearer " . API_Key . "`""
     Chat_ContentType_Header :=  "-H `"Content-Type: application/json" . "`""
     Chat_Data := "-d " . "`"{\`"model\`": \`"" . Chat_Model . "\`", \`"messages\`": [{\`"role\`": \`"assistant\`", \`"content\`": \`"" . Chat_Prompt . "\`"}]}`""
-;    Chat_Data := "-d " . "`"@" . Chat_PromptFile . "`""
+;;    Chat_Data := "-d " . "`"@" . Chat_PromptFile . "`""
     Return Join(A_Space, Curl_Command, Chat_Endpoint, Key_Header, Chat_ContentType_Header, Chat_Data, Pipe_toClip)
 }
 
@@ -138,4 +138,53 @@ TranscriptionCurling()
 PostProcessing()
 {
 ;;    Reference https://www.autohotkey.com/docs/v2/lib/RegExReplace.htm
+;;    Below is "empirically validated", not by any means "optimized".
+    A_Clipboard := A_Clipboard
+    A_Clipboard := RegExReplace(A_Clipboard, "i)(come on[,.]*|come out[,.]*|come up[,.]*)", "comma")
+    A_Clipboard := RegExReplace(A_Clipboard, "([.])(\w)", "decimalpointdot$2")    
+    A_Clipboard := RegExReplace(A_Clipboard, "[.,]", "")    
+    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(literal[\s.,]period)( |\b)", "$1prd$3")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(quotation[\s-]mark[[:blank:]]?|open[\s-]quote[[:blank:]]?|close[d]*[\s-]quote[[:blank:]]?|left[\s-]quote[[:blank:]]?|right[\s-]quote[[:blank:]]?)(\b)", "`"$3")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(open[ed]*[\s-]paren[t]*[[:blank:]]?|left[\s-]paren[t]*[[:blank:]]?)", "$1(")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)( close[d]*[\s-]paren[t]*[[:blank:]]?| right[\s-]paren[t]*[[:blank:]]?)(\b)", ")$2")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(comma| kama| karma)( |\b)", ",$3")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(colon mark| Cohen mark| column mark)( |\b)", ":$3")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(semicolon)( |\b)", ";$3")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(hyphen)( |\b)", "-")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(forward slash|4 slash|for slash)( |\b)", "/")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(period| PewDiePie| full stop)( \w|\b)", ". $u3")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(exclamation)([\s-]*)(mark)*( \w|\b)", "! $u5")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(question mark)( \w|\b)", "? $u3")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(apostrophe)( \w|\b)", "'$l3")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)(ellipsis|dot dot dot)", "...")
+    A_Clipboard := StrReplace(A_Clipboard, "single dash", "-")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)(plus[\s-]minus)", "+/-")
+    A_Clipboard := RegExReplace(A_Clipboard, "`"[[:blank:]]*([\S\s]*?)[[:blank:]]*`"", " `"$1`" ")
+    A_Clipboard := RegExReplace(A_Clipboard, "([[:blank:]]*)(\Q(\E)([[:blank:]]*)([\S\s]*?)([[:blank:]]*)(\Q)\E)([[:blank:]]*)", " $2$4$6 ")
+    A_Clipboard := RegExReplace(A_Clipboard, "(`")([[:blank:]]*)([,.;:!?])", "$1$3")
+    A_Clipboard := RegExReplace(A_Clipboard, "(\Q)\E)([[:blank:]]*)([,.;:!?])", "$1$3")
+    A_Clipboard := RegExReplace(A_Clipboard, "[.!?:]+[[:blank:]]*[a-z]", "$u0")
+    A_Clipboard := RegExReplace(A_Clipboard, "(\w)([[:blank:]]+)(\w)", "$1 $3")
+    A_Clipboard := RegExReplace(A_Clipboard, "([.!?]\s*\()([a-zA-Z])", "$1$u2")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)(number[[:blank:]]*)([0-9])", "#$2")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)(number one)", "#1")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)(number two)", "#2")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)(number three)", "#3")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)(number four)", "#4")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)(number five)", "#5")
+    A_Clipboard := RegexReplace(A_Clipboard, "(\R)$", "")			; Whisper tends to add a single newline at the end ...
+    A_Clipboard := Trim(A_Clipboard)
+    A_Clipboard := RegExReplace(A_Clipboard, "i)[[:blank:]]*(a new paragraph|new paragraph|new, paragraph)\b", "`r`n`r`n")
+    A_Clipboard := RegExReplace(A_Clipboard, "`am)^([[:blank:]]*)(\S)", "$u2")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)(no cap[s]*[[:blank:]]*)(\w)", "$l2")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)(\bcap[s]*[[:blank:]]*)(\w)", "$u2")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)([.!?])([[:blank:]]*[`"|\)][[:blank:]]*)(\w)", "$1$2$u3")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)([.!?])(\Q (\E)", "$1  (")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)(\Q) \E)([.!?])", ")$2")
+    A_Clipboard := StrReplace(A_Clipboard, "prd", "period")
+    A_Clipboard := StrReplace(A_Clipboard, "decimalpointdot", ".")
+    A_Clipboard := RegExReplace(A_Clipboard, "(\QMr\E|\QMrs\E|\QMs\E|\QDr\E|\QSt\E)( )([a-zA-Z])", "$1. $u3")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)([[:blank:]]*no[\s-]space[[:blank:]]*)", "")
+    A_Clipboard := RegExReplace(A_Clipboard, "i)([[:blank:]]*spacebar[[:blank:]]*)", " ")
+    A_Clipboard := RegExReplace(A_Clipboard, "([?!])([[:blank:]]*)([?!])", "$3")
 }
