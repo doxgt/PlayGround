@@ -137,7 +137,7 @@ TranscriptionCurling()
 
 PostProcessing()
 {
-;;    Reference https://www.autohotkey.com/docs/v2/lib/RegExReplace.htm
+;;    Reference https://www.autohotkey.com/docs/v2/misc/RegEx-QuickRef.htm
 ;;    Below is "empirically validated", not by any means "optimized".
     Temp_String := A_Clipboard
     Temp_String := RegExReplace(Temp_String, "i)(come on[,.]*|come out[,.]*|come up[,.]*)", "comma")
