@@ -10,7 +10,7 @@ NB: If working behind a proxy server, cURL command flags will need to be updated
 Added PostProcessing to enable basic formatting and manual punctuation in order to deliver a "Dragon-like" experience.  Auto-punctuations with period and comma are eliminated.  
 
 Following punctuations/formatting are supported: 
-"no cap, cap, no space, spacebar, open/left paren, close/right paren, ellipsis, colon mark, number 1-5, new paragraph, comma, literal period, period, left quote, right quote, question mark, exclamation mark"
+"no cap, cap, no space, spacebar, open/left paren, close/right paren, ellipsis, colon mark, number 1-5, new paragraph, comma, literal period, period, quotation mark, question mark, exclamation mark"
 
 Any suggestions on improving postprocessing is appreciated!
 
