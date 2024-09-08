@@ -1,5 +1,5 @@
 # PlayGround
-By my reckoning, cURL provides the most straightforward and portable API interface to OpenAI on Windows, especially on PCs that don't have Python already installed.
+By my reckoning, cURL provides the most straightforward and portable API interface to OpenAI (Groq, etc.) on Windows, especially on PCs that don't have Python already installed.
 
 The GPT_cURL.ahk file contains working implementations of transcription and chat completions through cURL.
 
