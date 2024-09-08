@@ -89,7 +89,7 @@ SC03A::								; Scan code for CAPSLOCK
 ;;    Keywait "SC029"
     KeyWait "SC03A"
     Send "{Blind}{Control up}{Alt up}{Shift up}"
-    Sleep 300
+    Sleep 500
     Run A_ComSpec " /C " Phiola_Remote_Stop,, "Hide"
     Sleep 300
     Run A_ComSpec " /C " TranscriptionCurling(),, "Hide"
@@ -98,11 +98,11 @@ SC03A::								; Scan code for CAPSLOCK
         MsgBox "Transcription did not happen for some reason despite waiting for 20s."
         Return
     }
-;;    TraySetIcon("*")                                  ; Restore default AHK icon
-    Sleep 50						
+;;    TraySetIcon("*")                                ; Restore default AHK icon
+;;    Sleep 50						
     PostProcessing()                              	; Optional but desirable
     WinActivate "ahk_id " WinID_Current
-    SendEvent "{Ctrl down}v{Ctrl up}"			; Send "^v" may work better in certain places
+    SendEvent "{Ctrl down}v{Ctrl up}"			    ; Send "^v" may work better in certain places
 }
 
 
@@ -141,52 +141,53 @@ PostProcessing()
 {
 ;;    Reference https://www.autohotkey.com/docs/v2/misc/RegEx-QuickRef.htm
 ;;    Below is "empirically validated", not by any means "optimized".
-    A_Clipboard := A_Clipboard
-    A_Clipboard := RegExReplace(A_Clipboard, "i)(come on[,.]*|come out[,.]*|come up[,.]*)", "comma")
-    A_Clipboard := RegExReplace(A_Clipboard, "([.])(\w)", "decimalpointdot$2")    
-    A_Clipboard := RegExReplace(A_Clipboard, "[.,]", "")    
-    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(literal[\s.,]period)( |\b)", "$1prd$3")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(quotation[\s-]mark[[:blank:]]?|open[\s-]quote[[:blank:]]?|close[d]*[\s-]quote[[:blank:]]?|left[\s-]quote[[:blank:]]?|right[\s-]quote[[:blank:]]?)(\b)", "`"$3")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(open[ed]*[\s-]paren[t]*[[:blank:]]?|left[\s-]paren[t]*[[:blank:]]?)", "$1(")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)( close[d]*[\s-]paren[t]*[[:blank:]]?| right[\s-]paren[t]*[[:blank:]]?)(\b)", ")$2")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(comma| kama| karma)( |\b)", ",$3")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(colon mark| Cohen mark| column mark)( |\b)", ":$3")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(semicolon)( |\b)", ";$3")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(hyphen)( |\b)", "-")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(forward slash|4 slash|for slash)( |\b)", "/")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(period| PewDiePie| full stop)( \w|\b)", ". $u3")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(exclamation)([\s-]*)(mark)*( \w|\b)", "! $u5")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(question mark)( \w|\b)", "? $u3")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)( |\b)(apostrophe)( \w|\b)", "'$l3")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)(ellipsis|dot dot dot)", "...")
-    A_Clipboard := StrReplace(A_Clipboard, "single dash", "-")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)(plus[\s-]minus)", "+/-")
-    A_Clipboard := RegExReplace(A_Clipboard, "`"[[:blank:]]*([\S\s]*?)[[:blank:]]*`"", " `"$1`" ")
-    A_Clipboard := RegExReplace(A_Clipboard, "([[:blank:]]*)(\Q(\E)([[:blank:]]*)([\S\s]*?)([[:blank:]]*)(\Q)\E)([[:blank:]]*)", " $2$4$6 ")
-    A_Clipboard := RegExReplace(A_Clipboard, "(`")([[:blank:]]*)([,.;:!?])", "$1$3")
-    A_Clipboard := RegExReplace(A_Clipboard, "(\Q)\E)([[:blank:]]*)([,.;:!?])", "$1$3")
-    A_Clipboard := RegExReplace(A_Clipboard, "[.!?:]+[[:blank:]]*[a-z]", "$u0")
-    A_Clipboard := RegExReplace(A_Clipboard, "(\w)([[:blank:]]+)(\w)", "$1 $3")
-    A_Clipboard := RegExReplace(A_Clipboard, "([.!?]\s*\()([a-zA-Z])", "$1$u2")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)(number[[:blank:]]*)([0-9])", "#$2")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)(number one)", "#1")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)(number two)", "#2")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)(number three)", "#3")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)(number four)", "#4")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)(number five)", "#5")
-    A_Clipboard := RegexReplace(A_Clipboard, "(\R)$", "")			; Whisper tends to add a single newline at the end ...
-    A_Clipboard := Trim(A_Clipboard)
-    A_Clipboard := RegExReplace(A_Clipboard, "i)[[:blank:]]*(a new paragraph|new paragraph|new, paragraph)\b", "`r`n`r`n")
-    A_Clipboard := RegExReplace(A_Clipboard, "`am)^([[:blank:]]*)(\S)", "$u2")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)(no cap[s]*[[:blank:]]*)(\w)", "$l2")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)(\bcap[s]*[[:blank:]]*)(\w)", "$u2")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)([.!?])([[:blank:]]*[`"|\)][[:blank:]]*)(\w)", "$1$2$u3")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)([.!?])(\Q (\E)", "$1  (")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)(\Q) \E)([.!?])", ")$2")
-    A_Clipboard := StrReplace(A_Clipboard, "prd", "period")
-    A_Clipboard := StrReplace(A_Clipboard, "decimalpointdot", ".")
-    A_Clipboard := RegExReplace(A_Clipboard, "(\QMr\E|\QMrs\E|\QMs\E|\QDr\E|\QSt\E)( )([a-zA-Z])", "$1. $u3")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)([[:blank:]]*no[\s-]space[[:blank:]]*)", "")
-    A_Clipboard := RegExReplace(A_Clipboard, "i)([[:blank:]]*spacebar[[:blank:]]*)", " ")
-    A_Clipboard := RegExReplace(A_Clipboard, "([?!])([[:blank:]]*)([?!])", "$3")
+    Temp_String := A_Clipboard
+    Temp_String := RegExReplace(Temp_String, "i)(come on[,.]*|come out[,.]*|come up[,.]*)", "comma")
+    Temp_String := RegExReplace(Temp_String, "([.])(\w)", "decimalpointdot$2")    
+    Temp_String := RegExReplace(Temp_String, "[.,]", "")    
+    Temp_String := RegExReplace(Temp_String, "i)( |\b)(literal[\s.,]period)( |\b)", "$1prd$3")
+    Temp_String := RegExReplace(Temp_String, "i)( |\b)(quotation[\s-]mark[[:blank:]]?|open[\s-]quote[[:blank:]]?|close[d]*[\s-]quote[[:blank:]]?|left[\s-]quote[[:blank:]]?|right[\s-]quote[[:blank:]]?)(\b)", "`"$3")
+    Temp_String := RegExReplace(Temp_String, "i)( |\b)(open[ed]*[\s-]paren[t]*[[:blank:]]?|left[\s-]paren[t]*[[:blank:]]?)", "$1(")
+    Temp_String := RegExReplace(Temp_String, "i)( close[d]*[\s-]paren[t]*[[:blank:]]?| right[\s-]paren[t]*[[:blank:]]?)(\b)", ")$2")
+    Temp_String := RegExReplace(Temp_String, "i)( |\b)(comma| kama| karma)( |\b)", ",$3")
+    Temp_String := RegExReplace(Temp_String, "i)( |\b)(colon mark| Cohen mark| column mark)( |\b)", ":$3")
+    Temp_String := RegExReplace(Temp_String, "i)( |\b)(semicolon)( |\b)", ";$3")
+    Temp_String := RegExReplace(Temp_String, "i)( |\b)(hyphen)( |\b)", "-")
+    Temp_String := RegExReplace(Temp_String, "i)( |\b)(forward slash|4 slash|for slash)( |\b)", "/")
+    Temp_String := RegExReplace(Temp_String, "i)( |\b)(period| PewDiePie| full stop)( \w|\b)", ". $u3")
+    Temp_String := RegExReplace(Temp_String, "i)( |\b)(exclamation)([\s-]*)(mark)*( \w|\b)", "! $u5")
+    Temp_String := RegExReplace(Temp_String, "i)( |\b)(question mark)( \w|\b)", "? $u3")
+    Temp_String := RegExReplace(Temp_String, "i)( |\b)(apostrophe)( \w|\b)", "'$l3")
+    Temp_String := RegExReplace(Temp_String, "i)(ellipsis|dot dot dot)", "...")
+    Temp_String := StrReplace(Temp_String, "single dash", "-")
+    Temp_String := RegExReplace(Temp_String, "i)(plus[\s-]minus)", "+/-")
+    Temp_String := RegExReplace(Temp_String, "`"[[:blank:]]*([\S\s]*?)[[:blank:]]*`"", " `"$1`" ")
+    Temp_String := RegExReplace(Temp_String, "([[:blank:]]*)(\Q(\E)([[:blank:]]*)([\S\s]*?)([[:blank:]]*)(\Q)\E)([[:blank:]]*)", " $2$4$6 ")
+    Temp_String := RegExReplace(Temp_String, "(`")([[:blank:]]*)([,.;:!?])", "$1$3")
+    Temp_String := RegExReplace(Temp_String, "(\Q)\E)([[:blank:]]*)([,.;:!?])", "$1$3")
+    Temp_String := RegExReplace(Temp_String, "[.!?:]+[[:blank:]]*[a-z]", "$u0")
+    Temp_String := RegExReplace(Temp_String, "(\w)([[:blank:]]+)(\w)", "$1 $3")
+    Temp_String := RegExReplace(Temp_String, "([.!?]\s*\()([a-zA-Z])", "$1$u2")
+    Temp_String := RegExReplace(Temp_String, "i)(number[[:blank:]]*)([0-9])", "#$2")
+    Temp_String := RegExReplace(Temp_String, "i)(number one)", "#1")
+    Temp_String := RegExReplace(Temp_String, "i)(number two)", "#2")
+    Temp_String := RegExReplace(Temp_String, "i)(number three)", "#3")
+    Temp_String := RegExReplace(Temp_String, "i)(number four)", "#4")
+    Temp_String := RegExReplace(Temp_String, "i)(number five)", "#5")
+    Temp_String := RegexReplace(Temp_String, "(\R)$", "")			; Whisper tends to add a single newline at the end ...
+    Temp_String := Trim(Temp_String)
+    Temp_String := RegExReplace(Temp_String, "i)[[:blank:]]*(a new paragraph|new paragraph|new, paragraph)\b", "`r`n`r`n")
+    Temp_String := RegExReplace(Temp_String, "`am)^([[:blank:]]*)(\S)", "$u2")
+    Temp_String := RegExReplace(Temp_String, "i)(no cap[s]*[[:blank:]]*)(\w)", "$l2")
+    Temp_String := RegExReplace(Temp_String, "i)(\bcap[s]*[[:blank:]]*)(\w)", "$u2")
+    Temp_String := RegExReplace(Temp_String, "i)([.!?])([[:blank:]]*[`"|\)][[:blank:]]*)(\w)", "$1$2$u3")
+    Temp_String := RegExReplace(Temp_String, "i)([.!?])(\Q (\E)", "$1  (")
+    Temp_String := RegExReplace(Temp_String, "i)(\Q) \E)([.!?])", ")$2")
+    Temp_String := StrReplace(Temp_String, "prd", "period")
+    Temp_String := StrReplace(Temp_String, "decimalpointdot", ".")
+    Temp_String := RegExReplace(Temp_String, "(\QMr\E|\QMrs\E|\QMs\E|\QDr\E|\QSt\E)( )([a-zA-Z])", "$1. $u3")
+    Temp_String := RegExReplace(Temp_String, "i)([[:blank:]]*no[\s-]space[[:blank:]]*)", "")
+    Temp_String := RegExReplace(Temp_String, "i)([[:blank:]]*spacebar[[:blank:]]*)", " ")
+    Temp_String := RegExReplace(Temp_String, "([?!])([[:blank:]]*)([?!])", "$3")
+    A_Clipboard := Temp_String
 }
