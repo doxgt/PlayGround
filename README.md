@@ -12,7 +12,7 @@ Added PostProcessing to enable basic formatting and manual punctuation in order 
 Following punctuations/formatting are supported: 
 "no cap, cap, no space, spacebar, open/left paren, close/right paren, ellipsis, colon mark, number 1-5, new paragraph, comma, literal period, period, quotation mark, question mark, exclamation mark"
 
-Any suggestions on improving postprocessing is appreciated!
+Any suggestion on improving postprocessing is appreciated!
 
 
 Files last updated 2024-Sep-08.
