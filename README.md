@@ -18,4 +18,4 @@ Any suggestion on improving postprocessing is appreciated!
 Files last updated 2024-09-30.
 
 
-P.S., regarding Philola, the latest stable release, as of 2024-12-03, is v2.2.8 (https://github.com/stsaz/phiola/releases/tag/v2.2.8).  The fastest way to test things out is to simply download the Zip file (https://github.com/stsaz/phiola/releases/download/v2.2.8/phiola-2.2.8-windows-x64.zip) and extract the "phiola-2" directory to the Desktop.  The rest is "plug-n-play".
+P.S., the latest stable release of Phiola, as of 2024-12-03, is v2.2.8 (https://github.com/stsaz/phiola/releases/tag/v2.2.8).  The fastest way to test things out is to simply download its Zip package (https://github.com/stsaz/phiola/releases/download/v2.2.8/phiola-2.2.8-windows-x64.zip) and extract the "phiola-2" directory to Username/Desktop.  The rest is "plug-n-play".
